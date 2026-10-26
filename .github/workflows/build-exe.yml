@@ -1,0 +1,19 @@
+name: Build Windows EXE
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: Expand-Archive -Path airtext-local.zip -DestinationPath . -Force
+      - run: pip install pyinstaller
+      - run: pyinstaller --onefile --name Airtext --add-data "airtext-local\index.html;." airtext-local\server.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: airtext-exe
+          path: dist/Airtext.exe
